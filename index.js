@@ -6,7 +6,7 @@ require('./config/conn');
 const app = express();
 const route = require('./routes/Routes')
 const cookieParser = require('cookie-parser')
-
+const dossierController = require('./controllers/DossierController')
 app.use(express.json());
 app.use(cookieParser()); 
 

@@ -9,14 +9,17 @@ const dossierModel = require('../models/Dossier');
 const isAuthenticated = require('../middleware/auth');
 
 const dossierController = require("../controllers/DossierController");
+'use strict';
 
-routes.put("/folders/update/:id",async(folder,id)=>{
-    return dossierController.updateFolder(folder,id);
-})
 
-routes.delete("/folders/folder/:id",async(id)=>{
-    return dossierController.deleteFolder(id);
-})
+routes.post("/addDossier",dossierController.addDossier)
+
+routes.get("/dossiers",dossierController.findAllDossiers)
+
+routes.put("/dossiers/update/:id",dossierController.updateDossier)
+
+routes.delete("/dossiers/dossier/:id",dossierController.deleteDossier)
+
 
 routes.post("/addUser",async (req,res)=> {
     try {
@@ -79,67 +82,15 @@ routes.get('/user',isAuthenticated, async (req, res) => {
     }
 })
 
-routes.get('/folders', async (req, res) => {
-    try {
-        const dossier  = await dossierModel.find();
-        if(!dossier){
-            return res.json({message:'No dossier found'})
-        }
-        return res.json({dossier:dossier})
-    } catch (error) {
-        return res.json({ error: error.message });  
-    }
-})
-
-routes.get('/folders/:id', async (req,res) => {
-    try {
-        const dossier  = await dossierModel.findById(req.params.idDossier);
-        if(!dossier){
-            return res.json({message:'No dossier found with this id'})
-        }
-        return res.json({dossier:dossier})
-    } catch (error) {
-        return res.json({ error: error.message });  
-    }
-})
-
-routes.post('/addFolder',async(req,res)=>{
-    try {
-        const { idDossier,patient,antecedents,examensMedicaux,listeTraitements,listeConsultations } = req.body;
-        const dossierExist = await dossierModel.findOne({ idDossier: req.body.idDossier });
-        if (dossierExist) {
-            return res.json({ message: 'Dossier already exist with the given id' })
-        }
-        const dossier = new dossierModel(req.body);
-        await dossier.save();
-        
-        return res.json({ success: true, message: 'Folder successfully added', data: dossier })
-    } catch (error) {
-        return res.json({ error: error });
-    }
-})
-routes.put('/folders/update/:id',async(req,res)=>{
-    try {
-        const dossier  = await dossierModel.findById(req.params.idDossier);
-        if(!dossier){
-            return res.json({message:'No dossier found with this id'})
-        }
-        dossier.$getAllSubdocs = req.body;
-        await dossier.save();
-    } catch (error) {
-        return res.json({ error: error });
-    }
-})
-
-routes.delete('/folders/:id',async(req,res)=>{
-    try {
-        const dossier  = await dossierModel.findById(req.params.idDossier);
-        if(!dossier){
-            return res.json({message:'No dossier found with this id'})
-        }
-        await dossier.delete();
-    } catch (error) {
-        return res.json({ error: error });
-    }
-})
+// routes.delete('/Dossiers/:id',async(req,res)=>{
+//     try {
+//         const dossier  = await dossierModel.findById(req.params.idDossier);
+//         if(!dossier){
+//             return res.json({message:'No dossier found with this id'})
+//         }
+//         await dossier.delete();
+//     } catch (error) {
+//         return res.json({ error: error });
+//     }
+// })
 module.exports = routes
